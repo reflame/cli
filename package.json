@@ -1,0 +1,17 @@
+{
+  "name": "cli",
+  "module": "index.ts",
+  "type": "module",
+  "scripts": {
+    "dev": "cd ./testApp/ && bun run --hot ../index.ts"
+  },
+  "devDependencies": {
+    "bun-types": "latest",
+    "typescript": "^5.0.0"
+  },
+  "dependencies": {
+    "@reflame/lib-resource": "^5.1.1",
+    "fast-glob": "^3.3.2",
+    "jsonc-parser": "^3.2.0"
+  }
+}
