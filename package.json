@@ -3,7 +3,8 @@
   "module": "index.ts",
   "type": "module",
   "scripts": {
-    "dev": "cd ./testApp/ && bun run --hot ../index.ts"
+    "dev": "cd ./testApp/ && bun run --hot ../index.ts",
+    "start": "cd ./testApp/ && bun run ../index.ts"
   },
   "devDependencies": {
     "bun-types": "latest",

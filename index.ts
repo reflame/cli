@@ -6,11 +6,17 @@ import * as libResource_ from "@reflame/lib-resource";
 
 (async () => {
   const workingDirectory = process.cwd();
+
+  const token = process.env.GITHUB_TOKEN;
+  console.log({ token });
+
   const config = jsoncParser_.parse(
     await fs_.readFile(path_.join(workingDirectory, ".reflame.config.jsonc"), {
       encoding: "utf-8",
     })
   );
+
+  // TODO: prep npm package bundle ahead of time
 
   const sourceDirectory = path_.join(workingDirectory, config.sourceDirectory);
   const paths = await fastGlob_([`${sourceDirectory}/**/*`], {
@@ -44,7 +50,7 @@ import * as libResource_ from "@reflame/lib-resource";
     .filter((resource) => !!resource)
     .sort((a, b) => (a.pathname < b.pathname ? -1 : 1));
 
-  const ids = resources.map(({ id }) => id);
+  const resourceIds = resources.map(({ id }) => id);
 
-  console.log(ids);
+  console.log(resourceIds);
 })();
