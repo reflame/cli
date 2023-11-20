@@ -2,7 +2,7 @@ import * as jsoncParser_ from "jsonc-parser";
 import * as fs_ from "node:fs/promises";
 import * as path_ from "node:path";
 import fastGlob_ from "fast-glob";
-// import * as libResource_ from "@reflame/lib-resource";
+import * as libResource_ from "@reflame/lib-resource";
 
 (async () => {
   const workingDirectory = process.cwd();
@@ -14,28 +14,12 @@ import fastGlob_ from "fast-glob";
   );
 
   const secret = process.env.REFLAME_SECRET;
-  const githubToken = process.env.GITHUB_TOKEN;
-
-  const installationsPayload = await fetch(
-    "https://api.github.com/user/installations",
-    {
-      method: "GET",
-      headers: {
-        accept: "application/vnd.github.v3+json",
-        authorization: `token ${githubToken}`,
-      },
-    }
-  ).then((response) => response.json());
-
-  console.log({ installationsPayload });
 
   if (!secret) {
     throw new Error("missing REFLAME_SECRET environment variable");
   }
 
   const appId = config.appId;
-
-  console.log({ appId, secret });
 
   const { payload } = await fetch(
     "https://identity.reflame.cloud/cli/exchange-secret",
@@ -67,57 +51,56 @@ import fastGlob_ from "fast-glob";
     ignore: ["**/**.d.ts", "**/.*/**/*", "**/node_modules/**/*"],
   });
 
-  console.log({ paths });
+  const resources = (
+    await Promise.all(
+      paths.map(async (path) => {
+        const pathname = `/${path_.relative(sourceDirectory, path)}`;
+        const contentType = libResource_.lookupContentType(pathname);
 
-  // const resources = (
-  //   await Promise.all(
-  //     paths.map(async (path) => {
-  //       const pathname = `/${path_.relative(sourceDirectory, path)}`;
-  //       const contentType = libResource_.lookupContentType(pathname);
+        if (!contentType) return;
 
-  //       if (!contentType) return;
+        const meta = libResource_.meta({
+          headers: {
+            contentType,
+          },
+        });
 
-  //       const meta = libResource_.meta({
-  //         headers: {
-  //           contentType,
-  //         },
-  //       });
+        const data = await fs_.readFile(path);
 
-  //       const data = await fs_.readFile(path);
+        const id = await libResource_.id({ data, meta });
 
-  //       const id = await libResource_.id({ data, meta });
+        return { pathname, id, data, meta };
+      })
+    )
+  )
+    .filter((resource) => !!resource)
+    .sort((a, b) => (a.pathname < b.pathname ? -1 : 1));
 
-  //       return { pathname, id, data, meta };
-  //     })
-  //   )
-  // )
-  //   .filter((resource) => !!resource)
-  //   .sort((a, b) => (a.pathname < b.pathname ? -1 : 1));
+  const resourcesWithoutData = resources.map(
+    ({ data, ...resource }) => resource
+  );
 
-  // const resourcesWithoutData = resources.map(
-  //   ({ data, ...resource }) => resource
-  // );
+  console.log(resourcesWithoutData);
+  const { resourceMissingByPathnameApp } = await fetch(
+    "https://deployer.reflame.cloud/cli/get-resources-missing",
+    {
+      method: "POST",
+      headers: {
+        "content-type": "application/json",
+        authorization: `Bearer ${accessToken}`,
+      },
+      body: JSON.stringify({
+        appId,
+        resourcesWithoutData,
+      }),
+    }
+  ).then((response) => response.json());
 
-  // console.log(resourcesWithoutData);
-  // const { resourceMissingByPathnameApp } = await fetch(
-  //   "https://deployer.reflame.cloud/cli/get-resources-missing",
-  //   {
-  //     method: "POST",
-  //     headers: {
-  //       "content-type": "application/json",
-  //       authorization: `Bearer ${accessToken}`,
-  //     },
-  //     body: JSON.stringify({
-  //       appId,
-  //       resourcesWithoutData,
-  //     }),
-  //   }
-  // ).then((response) => response.json());
+  // TODO: trigger a deploy sending only reflame config, package.json, missing resources
+  // need to save installation id for each app installed with the minimal-access github app
+  // can eagerly update during installation process?
+  // Might also need to add single file access to reflame config to identify app id
+  // if we need to do this exclusively through webhooks...
 
-  // // TODO: need to save installation id for each app installed with the minimal-access github app
-  // // can eagerly update during installation process?
-  // // Might also need to add single file access to reflame config to identify app id
-  // // if we need to do this exclusively through webhooks...
-
-  // console.log(resourceMissingByPathnameApp);
+  console.log(resourceMissingByPathnameApp);
 })();
