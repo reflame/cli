@@ -25,3 +25,6 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       - run: bun install
       - run: bun start
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          REFLAME_SECRET: ${{ secrets.REFLAME_SECRET }}
