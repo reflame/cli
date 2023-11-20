@@ -92,6 +92,25 @@ import * as libResource_ from "@reflame/lib-resource";
     }
   ).then((response) => response.json());
 
+  await fetch(
+    Object.assign(
+      new URL("https://deployer.reflame.cloud/cli/deploy-and-run-tests"),
+      {
+        search: new URLSearchParams({
+          appId,
+        }),
+      }
+    ),
+    {
+      method: "POST",
+      headers: {
+        "content-type": "application/cbor",
+        authorization: `Bearer ${accessToken}`,
+      },
+      // TODO: body
+    }
+  ).then((response) => response.json());
+
   // TODO: trigger a deploy sending only reflame config, package.json, missing resources
   // Need to save installation id for each app installed with the minimal-access github app
   // can eagerly update during installation process?
