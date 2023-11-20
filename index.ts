@@ -21,7 +21,7 @@ import * as libResource_ from "@reflame/lib-resource";
 
   const appId = config.appId;
 
-  const { payload } = await fetch(
+  const fetchAccessTokenPromise = fetch(
     "https://identity.reflame.cloud/cli/exchange-secret",
     {
       method: "POST",
@@ -33,16 +33,7 @@ import * as libResource_ from "@reflame/lib-resource";
         secret,
       }),
     }
-  ).then(async (response) => ({
-    headers: response.headers,
-    payload: await response.json(),
-  }));
-
-  const accessToken = payload.accessToken;
-
-  if (!accessToken) {
-    throw new Error("failed to get access token");
-  }
+  ).then((response) => response.json());
 
   // TODO: prep npm package bundle ahead of time
 
@@ -81,6 +72,11 @@ import * as libResource_ from "@reflame/lib-resource";
   );
 
   console.log(resourcesWithoutData);
+
+  const { accessToken } = await fetchAccessTokenPromise;
+  if (!accessToken) {
+    throw new Error("failed to get access token");
+  }
   const { resourceMissingByPathnameApp } = await fetch(
     "https://deployer.reflame.cloud/cli/get-resources-missing",
     {
@@ -97,7 +93,7 @@ import * as libResource_ from "@reflame/lib-resource";
   ).then((response) => response.json());
 
   // TODO: trigger a deploy sending only reflame config, package.json, missing resources
-  // need to save installation id for each app installed with the minimal-access github app
+  // Need to save installation id for each app installed with the minimal-access github app
   // can eagerly update during installation process?
   // Might also need to add single file access to reflame config to identify app id
   // if we need to do this exclusively through webhooks...
