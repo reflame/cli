@@ -71,9 +71,9 @@ import * as libResource_ from "@reflame/lib-resource";
     ({ data, ...resource }) => resource
   );
 
-  console.log(resourcesWithoutData);
+  console.log(resources);
 
-  const { accessToken } = await fetchAccessTokenPromise;
+  const accessToken = (await fetchAccessTokenPromise)?.accessToken;
   if (!accessToken) {
     throw new Error("failed to get access token");
   }
@@ -92,6 +92,8 @@ import * as libResource_ from "@reflame/lib-resource";
     }
   ).then((response) => response.json());
 
+  console.log({ resourceMissingByPathnameApp });
+
   await fetch(
     Object.assign(
       new URL("https://deployer.reflame.cloud/cli/deploy-and-run-tests"),
@@ -103,6 +105,7 @@ import * as libResource_ from "@reflame/lib-resource";
     ),
     {
       method: "POST",
+      verbose: true,
       headers: {
         "content-type": "application/cbor",
         authorization: `Bearer ${accessToken}`,
