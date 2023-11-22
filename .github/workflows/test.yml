@@ -23,7 +23,7 @@ jobs:
       - run: echo "reflame = { url = \"https://npm.pkg.github.com\", token = \"${GITHUB_TOKEN}\" }" >> bunfig.toml
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      - run: cat bunfig.toml && bun install
+      - run: bun install
       - run: bun start
         env:
-          REFLAME_SECRET: ${{ secrets.REFLAME_SECRET }}
+          REFLAME_SECRET: ${{ secrets.REFLAME_SECRET_DEVELOPMENT }}
