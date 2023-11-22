@@ -19,8 +19,8 @@ jobs:
       - uses: oven-sh/setup-bun@v1
         with:
           bun-version: 1.0.13
-      - run: echo "[install.scopes]" > ~/.bunfig.toml
-      - run: echo "reflame = { url = \"https://npm.pkg.github.com\", token = \"${GITHUB_TOKEN}\" }" >> ~/.bunfig.toml
+      - run: echo "[install.scopes]" > bunfig.toml
+      - run: echo "reflame = { url = \"https://npm.pkg.github.com\", token = \"${GITHUB_TOKEN}\" }" >> bunfig.toml
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       - run: cat ~/.bunfig.toml && bun install
