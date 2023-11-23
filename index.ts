@@ -101,6 +101,10 @@ import * as stream_ from "node:stream";
     ? "95bb1250951bf0e63bd88d226bf69e2bb36e6472"
     : (process.env.GITHUB_SHA as string);
 
+  const branch = inDevelopment
+    ? "main"
+    : (process.env.GITHUB_REF_NAME as string);
+
   const payloadPrimary = {
     config,
   };
@@ -114,9 +118,15 @@ import * as stream_ from "node:stream";
     },
   }));
 
-  const sendingStream = new cborX_.EncoderStream();
+  const encoder = new cborX_.Encoder({ sequential: true });
 
-  // const resources = [];
+  const body = Buffer.concat([
+    encoder.encode(payloadPrimary),
+    encoder.encode(payloadSecondary),
+    ...payloadResources.map((payloadResource) =>
+      encoder.encode(payloadResource)
+    ),
+  ]);
 
   const deployPromise = fetch(
     Object.assign(
@@ -125,6 +135,7 @@ import * as stream_ from "node:stream";
         search: new URLSearchParams({
           appId,
           commit,
+          branch,
         }),
       }
     ),
@@ -135,17 +146,10 @@ import * as stream_ from "node:stream";
         "content-type": "application/cbor",
         authorization: `Bearer ${accessToken}`,
       },
-      body: stream_.Readable.toWeb(sendingStream),
+      body,
       // TODO: body
     }
   ).then((response) => response.json());
-
-  sendingStream.write(payloadPrimary);
-  sendingStream.write(payloadSecondary);
-  payloadResources.forEach((payloadResource) =>
-    sendingStream.write(payloadResource)
-  );
-  sendingStream.end();
 
   const deployResult = await deployPromise;
 
