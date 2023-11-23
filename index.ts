@@ -3,8 +3,11 @@ import * as fs_ from "node:fs/promises";
 import * as path_ from "node:path";
 import fastGlob_ from "fast-glob";
 import * as libResource_ from "@reflame/lib-resource";
+import * as cborX_ from "cbor-x";
+import * as stream_ from "node:stream";
 
 (async () => {
+  const inDevelopment = process.env.NODE_ENV === "development";
   const workingDirectory = process.cwd();
 
   const config = jsoncParser_.parse(
@@ -64,7 +67,7 @@ import * as libResource_ from "@reflame/lib-resource";
       })
     )
   )
-    .filter((resource) => !!resource)
+    .filter((resource): resource is NonNullable<typeof resource> => !!resource)
     .sort((a, b) => (a.pathname < b.pathname ? -1 : 1));
 
   const resourcesWithoutData = resources.map(
@@ -94,25 +97,59 @@ import * as libResource_ from "@reflame/lib-resource";
 
   console.log({ resourceMissingByPathnameApp });
 
-  await fetch(
+  const commit = inDevelopment
+    ? "95bb1250951bf0e63bd88d226bf69e2bb36e6472"
+    : (process.env.GITHUB_SHA as string);
+
+  const payloadPrimary = {
+    config,
+  };
+
+  const payloadSecondary = {};
+
+  const payloadResources = resources.map(({ data, ...resource }) => ({
+    resource: {
+      ...resource,
+      data: resourceMissingByPathnameApp[resource.pathname] ? data : undefined,
+    },
+  }));
+
+  const sendingStream = new cborX_.EncoderStream();
+
+  // const resources = [];
+
+  const deployPromise = fetch(
     Object.assign(
       new URL("https://deployer.reflame.cloud/cli/deploy-and-run-tests"),
       {
         search: new URLSearchParams({
           appId,
+          commit,
         }),
       }
     ),
     {
       method: "POST",
-      verbose: true,
+      // verbose: true,
       headers: {
         "content-type": "application/cbor",
         authorization: `Bearer ${accessToken}`,
       },
+      body: stream_.Readable.toWeb(sendingStream),
       // TODO: body
     }
   ).then((response) => response.json());
+
+  sendingStream.write(payloadPrimary);
+  sendingStream.write(payloadSecondary);
+  payloadResources.forEach((payloadResource) =>
+    sendingStream.write(payloadResource)
+  );
+  sendingStream.end();
+
+  const deployResult = await deployPromise;
+
+  console.log(deployResult);
 
   // TODO: trigger a deploy sending only reflame config, package.json, missing resources
   // Need to save installation id for each app installed with the minimal-access github app
