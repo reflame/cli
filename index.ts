@@ -41,9 +41,12 @@ import * as stream_ from "node:stream";
   // TODO: prep npm package bundle ahead of time
 
   const sourceDirectory = path_.join(workingDirectory, config.sourceDirectory);
+
   const paths = await fastGlob_([`${sourceDirectory}/**/*`], {
     ignore: ["**/**.d.ts", "**/.*/**/*", "**/node_modules/**/*"],
   });
+
+  console.log(`Found files matching pattern: ${sourceDirectory}/**/*`, paths);
 
   const resources = (
     await Promise.all(
@@ -74,12 +77,12 @@ import * as stream_ from "node:stream";
     ({ data, ...resource }) => resource
   );
 
-  console.log(resources);
-
   const accessToken = (await fetchAccessTokenPromise)?.accessToken;
   if (!accessToken) {
-    throw new Error("failed to get access token");
+    throw new Error("Failed to fetch access token");
   }
+  console.log("Got a new access token from Reflame.");
+
   const { resourceMissingByPathnameApp } = await fetch(
     "https://deployer.reflame.cloud/cli/get-resources-missing",
     {
@@ -95,7 +98,14 @@ import * as stream_ from "node:stream";
     }
   ).then((response) => response.json());
 
-  console.log({ resourceMissingByPathnameApp });
+  Object.keys(resourceMissingByPathnameApp).length > 0
+    ? console.log(
+        `Found some new files for Reflame to process:`,
+        Object.keys(resourceMissingByPathnameApp).map((pathname) =>
+          path_.join(sourceDirectory, pathname)
+        )
+      )
+    : console.log(`Found no new files for Reflame to process.`);
 
   const commit = inDevelopment
     ? "95bb1250951bf0e63bd88d226bf69e2bb36e6472"
@@ -128,6 +138,9 @@ import * as stream_ from "node:stream";
     ),
   ]);
 
+  console.log(
+    `Starting deployment and tests for commit ${commit} on branch ${branch}...`
+  );
   const deployPromise = fetch(
     Object.assign(
       new URL("https://deployer.reflame.cloud/cli/deploy-and-run-tests"),
@@ -153,13 +166,12 @@ import * as stream_ from "node:stream";
 
   const deployResult = await deployPromise;
 
-  console.log(deployResult);
+  if (!deployResult.checkRunDeployUrl) {
+    throw new Error("Deployment failed!" + JSON.stringify(deployResult));
+  }
 
-  // TODO: trigger a deploy sending only reflame config, package.json, missing resources
-  // Need to save installation id for each app installed with the minimal-access github app
-  // can eagerly update during installation process?
-  // Might also need to add single file access to reflame config to identify app id
-  // if we need to do this exclusively through webhooks...
-
-  console.log(resourceMissingByPathnameApp);
+  console.log(
+    "Deployment started! Follow along here: ",
+    deployResult.checkRunDeployUrl
+  );
 })();
