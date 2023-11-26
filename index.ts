@@ -175,6 +175,7 @@ const execPromise = (command: string) => {
   );
 
   const commitsLatest = await commitsLatestPromise;
+  console.log(commitsLatest);
 
   const deployPromise = fetch(
     Object.assign(
