@@ -5,9 +5,35 @@ import fastGlob_ from "fast-glob";
 import * as libResource_ from "@reflame/lib-resource";
 import * as cborX_ from "cbor-x";
 import * as stream_ from "node:stream";
+import * as childProcess_ from "node:child_process";
+
+const execPromise = (command: string) => {
+  return new Promise((resolve, reject) => {
+    childProcess_.exec(command, (error, stdout, stderr) => {
+      if (error) {
+        reject(`Execution error: ${error}`);
+        return;
+      }
+      if (stderr) {
+        reject(`Error: ${stderr}`);
+        return;
+      }
+      resolve(stdout);
+    });
+  });
+};
 
 (async () => {
   const inDevelopment = process.env.NODE_ENV === "development";
+
+  const commit = inDevelopment
+    ? "c096f9dcc14963cd9742075eb37a2cdf1714dfe5"
+    : (process.env.GITHUB_SHA as string);
+
+  const branch = inDevelopment
+    ? "main"
+    : (process.env.GITHUB_REF_NAME as string);
+
   const workingDirectory = process.cwd();
 
   const config = jsoncParser_.parse(
@@ -37,6 +63,20 @@ import * as stream_ from "node:stream";
       }),
     }
   ).then((response) => response.json());
+
+  const commitsLatestPromise = execPromise(`git rev-list -n 32 ${commit}`).then(
+    (output) =>
+      (output as string)
+        .split("\n")
+        .slice(
+          // Remove head commit
+          1,
+          // Handle final newline
+
+          -1
+        )
+        .join(",")
+  );
 
   // TODO: prep npm package bundle ahead of time
 
@@ -107,14 +147,6 @@ import * as stream_ from "node:stream";
       )
     : console.log(`Found no new files for Reflame to process.`);
 
-  const commit = inDevelopment
-    ? "95bb1250951bf0e63bd88d226bf69e2bb36e6472"
-    : (process.env.GITHUB_SHA as string);
-
-  const branch = inDevelopment
-    ? "main"
-    : (process.env.GITHUB_REF_NAME as string);
-
   const payloadPrimary = {
     config,
   };
@@ -141,6 +173,9 @@ import * as stream_ from "node:stream";
   console.log(
     `Starting deployment and tests for commit ${commit} on branch ${branch}...`
   );
+
+  const commitsLatest = await commitsLatestPromise;
+
   const deployPromise = fetch(
     Object.assign(
       new URL("https://deployer.reflame.cloud/cli/deploy-and-run-tests"),
@@ -148,6 +183,7 @@ import * as stream_ from "node:stream";
         search: new URLSearchParams({
           appId,
           commit,
+          commitsLatest,
           branch,
         }),
       }

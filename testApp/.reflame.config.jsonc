@@ -1,4 +1,7 @@
 {
   "appId": "01HFR07ANJYQPFHZ47G5MXY10Z",
   "sourceDirectory": "app",
+  "storybookCompatibility": {
+    "testStories": true,
+  },
 }
