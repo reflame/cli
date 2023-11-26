@@ -90,7 +90,7 @@ const execPromise = (command: string) => {
         body: JSON.stringify({
           query: `
       query {
-        repository(owner: "${process.env.GITHUB_REPOSITORY_OWNER}", repo: "${
+        repository(owner: "${process.env.GITHUB_REPOSITORY_OWNER}", name: "${
             process.env.GITHUB_REPOSITORY?.split("/")[1]
           }") {
           object(oid: "${commit}") {
