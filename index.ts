@@ -107,10 +107,12 @@ const execPromise = (command: string) => {
         }),
       })
         .then((response) => response.json())
-        .then((payload) =>
-          payload.data.repository.object.history.nodes
-            .map(({ oid }) => oid)
-            .slice(1)
+        .then(
+          (payload) =>
+            console.log(payload) ||
+            payload.data.repository.object.history.nodes
+              .map(({ oid }) => oid)
+              .slice(1)
         );
 
   // TODO: prep npm package bundle ahead of time
