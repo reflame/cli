@@ -12,6 +12,7 @@ await fs_.mkdir(packagePath, { recursive: true });
 
 await Promise.all([
   fs_.cp("./build/deps.mjs", `${packagePath}/deps.mjs`),
+  fs_.cp("./README.md", `${packagePath}/README.md`),
   fs_
     .readFile("./build/entry.mjs", { encoding: "utf-8" })
     .then((code) =>
