@@ -4,8 +4,8 @@ on:
     branches:
       - "*"
 jobs:
-  test:
-    name: Test CLI
+  test-and-publish:
+    name: Test and publish CLI
     runs-on: ubuntu-22.04
     timeout-minutes: 1
     concurrency:
@@ -44,4 +44,6 @@ jobs:
         env:
           NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
       - run: cd packages/@reflame/cli && npm publish --access public --provenance
+        if: github.ref == 'refs/heads/main'
+      - run: npx @reflame/cli
         if: github.ref == 'refs/heads/main'

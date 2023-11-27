@@ -1,7 +1,6 @@
 {
   "name": "@reflame/cli",
   "version": "0.0.8",
-  "module": "index.ts",
   "type": "module",
   "repository": {
     "url": "https://github.com/reflame/cli"
