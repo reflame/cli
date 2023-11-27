@@ -1,8 +1,11 @@
 {
   "name": "@reflame/cli",
-  "version": "0.0.7",
+  "version": "0.0.8",
   "module": "index.ts",
   "type": "module",
+  "repository": {
+    "url": "https://github.com/reflame/cli"
+  },
   "scripts": {
     "dev": "cd ./testApp/ && NODE_ENV=development bun run --hot ../app/entry.ts",
     "build": "bun ./build.js",

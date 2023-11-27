@@ -27,6 +27,7 @@ await Promise.all([
         bin: {
           reflame: "./entry.mjs",
         },
+        repository: packageJson.repository,
       },
       undefined,
       "  "
