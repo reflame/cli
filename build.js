@@ -31,6 +31,9 @@ await Promise.all([
     minify: false,
     bundle: true,
     platform: "node",
+    define: {
+      "process.env.NODE_ENV": `"production"`,
+    },
     plugins: [jsoncParserPlugin],
     format: "esm",
     outdir: "build",
@@ -43,6 +46,9 @@ await Promise.all([
     minify: false,
     bundle: false,
     platform: "node",
+    define: {
+      "process.env.NODE_ENV": `"production"`,
+    },
     format: "esm",
     outdir: "build",
   }),
