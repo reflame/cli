@@ -45,5 +45,6 @@ jobs:
           NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
       - run: cd packages/@reflame/cli && npm publish --access public --provenance || true
         if: github.ref == 'refs/heads/main'
-      - run: npx @reflame/cli
+        # TODO: use exact version published
+      - run: cd testApp && npx @reflame/cli
         if: github.ref == 'refs/heads/main'

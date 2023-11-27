@@ -26,6 +26,7 @@ await Promise.all([
         version: packageJson.version,
         bin: {
           reflame: "./entry.mjs",
+          cli: "./entry.mjs",
         },
         repository: packageJson.repository,
       },
