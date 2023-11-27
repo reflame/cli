@@ -44,6 +44,7 @@ try {
     forceAuth: {
       token: process.env.NPM_TOKEN,
     },
+    provenance: true,
     access: "public",
   });
   console.log(`Published ${packageJson.version}`);
