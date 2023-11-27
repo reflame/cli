@@ -21,6 +21,16 @@ const execPromise = (command: string) => {
 };
 
 (async () => {
+  const deployerOrigin =
+    process.env.NODE_ENV === "development"
+      ? "https://deployer.reflame.cloud"
+      : "https://deployer.reflame.app";
+
+  const identityOrigin =
+    process.env.NODE_ENV === "development"
+      ? "https://identity.reflame.cloud"
+      : "https://identity.reflame.app";
+
   const commit =
     process.env.NODE_ENV === "development"
       ? "c096f9dcc14963cd9742075eb37a2cdf1714dfe5"
@@ -48,7 +58,7 @@ const execPromise = (command: string) => {
   const appId = config.appId;
 
   const fetchAccessTokenPromise = fetch(
-    "https://identity.reflame.cloud/cli/exchange-secret",
+    new URL("/cli/exchange-secret", identityOrigin),
     {
       method: "POST",
       headers: {
@@ -157,7 +167,7 @@ const execPromise = (command: string) => {
   console.log("Got a new access token from Reflame.");
 
   const { resourceMissingByPathnameApp } = await fetch(
-    "https://deployer.reflame.cloud/cli/get-resources-missing",
+    new URL("/cli/get-resources-missing", deployerOrigin),
     {
       method: "POST",
       headers: {
@@ -211,17 +221,14 @@ const execPromise = (command: string) => {
   );
 
   const deployPromise = fetch(
-    Object.assign(
-      new URL("https://deployer.reflame.cloud/cli/deploy-and-run-tests"),
-      {
-        search: new URLSearchParams({
-          appId,
-          commit,
-          commitsLatest,
-          branch,
-        }),
-      }
-    ),
+    Object.assign(new URL("/cli/deploy-and-run-tests", deployerOrigin), {
+      search: new URLSearchParams({
+        appId,
+        commit,
+        commitsLatest,
+        branch,
+      }),
+    }),
     {
       method: "POST",
       // verbose: true,
