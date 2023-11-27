@@ -38,8 +38,10 @@ jobs:
       - uses: actions/setup-node@v4
         if: github.ref == 'refs/heads/main'
         with:
-          node-version: 18
-      - run: cd packages/@reflame/cli && npm publish --access public --provenance
+          node-version: 20
+      - run: cd packages/@reflame/cli && echo "//registry.npmjs.org/:_authToken=${NPM_TOKEN}" >> .npmrc
         if: github.ref == 'refs/heads/main'
         env:
           NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
+      - run: cd packages/@reflame/cli && npm publish --access public --provenance
+        if: github.ref == 'refs/heads/main'
