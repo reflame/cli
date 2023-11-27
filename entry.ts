@@ -1,10 +1,7 @@
-import * as jsoncParser_ from "jsonc-parser";
+import { jsoncParser_, fastGlob_, libResource_, cborX_ } from "./deps.mjs";
+
 import * as fs_ from "node:fs/promises";
 import * as path_ from "node:path";
-import fastGlob_ from "fast-glob";
-import * as libResource_ from "@reflame/lib-resource";
-import * as cborX_ from "cbor-x";
-import * as stream_ from "node:stream";
 import * as childProcess_ from "node:child_process";
 
 const execPromise = (command: string) => {

@@ -1,13 +1,17 @@
 {
-  "name": "cli",
+  "name": "@reflame/cli",
+  "version": "0.0.1",
   "module": "index.ts",
   "type": "module",
   "scripts": {
-    "dev": "cd ./testApp/ && NODE_ENV=development bun run --hot ../index.ts",
-    "start": "cd ./testApp/ && NODE_ENV=production bun run ../index.ts"
+    "dev": "cd ./testApp/ && NODE_ENV=development bun run --hot ../entry.ts",
+    "build": "bun ./build.js",
+    "test": "cd ./testApp/ && bun run ../build/entry.mjs",
+    "start": "cd ./testApp/ && NODE_ENV=production bun run ../entry.ts"
   },
   "devDependencies": {
     "bun-types": "latest",
+    "esbuild": "^0.19.8",
     "typescript": "^5.0.0"
   },
   "dependencies": {
