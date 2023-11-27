@@ -1,6 +1,6 @@
 {
   "name": "@reflame/cli",
-  "version": "0.0.10",
+  "version": "0.0.11",
   "type": "module",
   "repository": {
     "url": "https://github.com/reflame/cli"
