@@ -12,8 +12,12 @@ jobs:
       group: test
       cancel-in-progress: true
     permissions:
-      packages: read
+      # for testing cli functionality (get commit history)
       contents: read
+      # for installing @reflame/lib-resource
+      packages: read
+      # for npm publish provenance
+      id-token: write
     steps:
       - uses: actions/checkout@v3.5.0
       - uses: oven-sh/setup-bun@v1
