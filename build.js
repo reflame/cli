@@ -27,7 +27,9 @@ await Promise.all([
     outExtension: {
       ".js": ".mjs",
     },
-    minify: false,
+    minifyWhitespace: false,
+    minifyIdentifiers: false,
+    minifySyntax: true,
     bundle: true,
     platform: "node",
     define: {
@@ -42,7 +44,9 @@ await Promise.all([
     outExtension: {
       ".js": ".mjs",
     },
-    minify: false,
+    minifyWhitespace: false,
+    minifyIdentifiers: false,
+    minifySyntax: true,
     bundle: false,
     // banner: {
     //   js: "#!/usr/bin/env node",
