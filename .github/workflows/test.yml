@@ -1,4 +1,4 @@
-name: test
+name: test-and-publish
 on:
   push:
     branches:
@@ -9,7 +9,7 @@ jobs:
     runs-on: ubuntu-22.04
     timeout-minutes: 1
     concurrency:
-      group: test
+      group: test-and-publish
       cancel-in-progress: true
     permissions:
       # for testing cli functionality (get commit history)
@@ -34,11 +34,13 @@ jobs:
       - run: bun run build
       # - run: bun run start
       #   env:
-      #     REFLAME_SECRET: ${{ secrets.REFLAME_SECRET_DEVELOPMENT }}
+      # REFLAME_SECRET_DEVELOPMENT: ${{ secrets.REFLAME_SECRET_DEVELOPMENT }}
+      # REFLAME_SECRET_PRODUCTION: ${{ secrets.REFLAME_SECRET_PRODUCTION }}
       #     GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       - run: bun run start-node
         env:
-          REFLAME_SECRET: ${{ secrets.REFLAME_SECRET_DEVELOPMENT }}
+          # REFLAME_SECRET: ${{ secrets.REFLAME_SECRET_DEVELOPMENT }}
+          REFLAME_SECRET: ${{ secrets.REFLAME_SECRET_PRODUCTION }}
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       - run: bun run publish
         if: github.ref == 'refs/heads/main'
@@ -52,5 +54,6 @@ jobs:
       - run: cd testApp && npx @reflame/cli
         if: github.ref == 'refs/heads/main'
         env:
-          REFLAME_SECRET: ${{ secrets.REFLAME_SECRET_DEVELOPMENT }}
+          # REFLAME_SECRET: ${{ secrets.REFLAME_SECRET_DEVELOPMENT }}
+          REFLAME_SECRET: ${{ secrets.REFLAME_SECRET_PRODUCTION }}
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
