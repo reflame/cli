@@ -1,7 +1,7 @@
 import * as fs_ from "node:fs/promises";
-import * as pacote_ from "pacote";
-import * as arborist_ from "@npmcli/arborist";
-import * as libNpmPublish_ from "libnpmpublish";
+// import * as pacote_ from "pacote";
+// import * as arborist_ from "@npmcli/arborist";
+// import * as libNpmPublish_ from "libnpmpublish";
 import * as path_ from "node:path";
 const packageJson = JSON.parse(
   await fs_.readFile("./package.json", { encoding: "utf-8" })
@@ -34,32 +34,30 @@ await Promise.all([
   ),
 ]);
 
-const manifest = await pacote_.manifest(packagePath);
-const tarData = await pacote_.tarball(packagePath, {
-  Arborist: arborist_.Arborist,
-});
+// const manifest = await pacote_.manifest(packagePath);
+// const tarData = await pacote_.tarball(packagePath, {
+//   Arborist: arborist_.Arborist,
+// });
 
-try {
-  await libNpmPublish_.publish(manifest, tarData, {
-    npmVersion: `${packageJson.name}@${packageJson.version}`,
-    forceAuth: {
-      token: process.env.NPM_TOKEN,
-    },
-    // Seems to be erroring in Bun...
-    provenance: true,
-    access: "public",
-  });
-  console.log(`Published ${packageJson.version}`);
-} catch (error) {
-  if (
-    error.message.endsWith(
-      `You cannot publish over the previously published versions: ${packageJson.version}.`
-    )
-  ) {
-    console.log(`Skipped ${packageJson.version}`);
-  } else {
-    throw error;
-  }
-}
-
-// https://github.com/npm/cli/tree/latest/workspaces/libnpmpublish
+// try {
+//   await libNpmPublish_.publish(manifest, tarData, {
+//     npmVersion: `${packageJson.name}@${packageJson.version}`,
+//     forceAuth: {
+//       token: process.env.NPM_TOKEN,
+//     },
+//     // Seems to be erroring in Bun...
+//     provenance: true,
+//     access: "public",
+//   });
+//   console.log(`Published ${packageJson.version}`);
+// } catch (error) {
+//   if (
+//     error.message.endsWith(
+//       `You cannot publish over the previously published versions: ${packageJson.version}.`
+//     )
+//   ) {
+//     console.log(`Skipped ${packageJson.version}`);
+//   } else {
+//     throw error;
+//   }
+// }
