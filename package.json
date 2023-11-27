@@ -1,6 +1,6 @@
 {
   "name": "@reflame/cli",
-  "version": "0.0.9",
+  "version": "0.0.10",
   "type": "module",
   "repository": {
     "url": "https://github.com/reflame/cli"
@@ -9,7 +9,8 @@
     "dev": "cd ./testApp/ && NODE_ENV=development bun run --hot ../app/entry.ts",
     "build": "bun ./build.js",
     "publish": "bun ./publish.js",
-    "start": "cd ./testApp/ && bun run ../build/entry.mjs"
+    "start": "cd ./testApp/ && bun run ../build/entry.mjs",
+    "start-node": "cd ./testApp/ && node ../build/entry.mjs"
   },
   "devDependencies": {
     "@npmcli/arborist": "^7.2.1",
