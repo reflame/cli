@@ -4,10 +4,9 @@
   "module": "index.ts",
   "type": "module",
   "scripts": {
-    "dev": "cd ./testApp/ && NODE_ENV=development bun run --hot ../entry.ts",
+    "dev": "cd ./testApp/ && NODE_ENV=development bun run --hot ../app/entry.ts",
     "build": "bun ./build.js",
-    "test": "cd ./testApp/ && bun run ../build/entry.mjs",
-    "start": "cd ./testApp/ && NODE_ENV=production bun run ../entry.ts"
+    "start": "cd ./testApp/ && bun run ../build/entry.mjs"
   },
   "devDependencies": {
     "bun-types": "latest",

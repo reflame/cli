@@ -1,4 +1,3 @@
-import * as url_ from "node:url";
 import * as path_ from "node:path";
 import * as esbuild_ from "esbuild";
 
@@ -24,7 +23,7 @@ const jsoncParserPlugin = {
 
 await Promise.all([
   esbuild_.build({
-    entryPoints: ["deps.mjs"],
+    entryPoints: ["app/deps.mjs"],
     outExtension: {
       ".js": ".mjs",
     },
@@ -39,7 +38,7 @@ await Promise.all([
     outdir: "build",
   }),
   esbuild_.build({
-    entryPoints: ["entry.ts"],
+    entryPoints: ["app/entry.ts"],
     outExtension: {
       ".js": ".mjs",
     },
