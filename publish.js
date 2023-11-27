@@ -12,7 +12,11 @@ await fs_.mkdir(packagePath, { recursive: true });
 
 await Promise.all([
   fs_.cp("./build/deps.mjs", `${packagePath}/deps.mjs`),
-  fs_.cp("./build/entry.mjs", `${packagePath}/entry.mjs`),
+  fs_
+    .readFile("./build/entry.mjs", { encoding: "utf-8" })
+    .then((code) =>
+      fs_.writeFile(`${packagePath}/entry.mjs`, `#!/usr/bin/env node\n${code}`)
+    ),
   fs_.writeFile(
     `${packagePath}/package.json`,
     JSON.stringify(

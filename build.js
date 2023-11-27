@@ -44,9 +44,9 @@ await Promise.all([
     },
     minify: false,
     bundle: false,
-    banner: {
-      js: "#!/usr/bin/env node",
-    },
+    // banner: {
+    //   js: "#!/usr/bin/env node",
+    // },
     platform: "node",
     define: {
       "process.env.NODE_ENV": `"production"`,
