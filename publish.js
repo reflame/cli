@@ -45,7 +45,8 @@ try {
     forceAuth: {
       token: process.env.NPM_TOKEN,
     },
-    provenance: true,
+    // Seems to be erroring in Bun...
+    // provenance: true,
     access: "public",
   });
   console.log(`Published ${packageJson.version}`);
