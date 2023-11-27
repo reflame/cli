@@ -1,16 +1,20 @@
 {
   "name": "@reflame/cli",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "module": "index.ts",
   "type": "module",
   "scripts": {
     "dev": "cd ./testApp/ && NODE_ENV=development bun run --hot ../app/entry.ts",
     "build": "bun ./build.js",
+    "publish": "bun ./publish.js",
     "start": "cd ./testApp/ && bun run ../build/entry.mjs"
   },
   "devDependencies": {
+    "@npmcli/arborist": "^7.2.1",
     "bun-types": "latest",
     "esbuild": "^0.19.8",
+    "libnpmpublish": "^9.0.2",
+    "pacote": "^17.0.4",
     "typescript": "^5.0.0"
   },
   "dependencies": {
