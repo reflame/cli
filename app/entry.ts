@@ -72,36 +72,35 @@ const execPromise = (command: string) => {
     }
   ).then((response) => response.json());
 
-  const commitsLatestPromise =
-    process.env.NODE_ENV === "development"
-      ? // This doesn't work in gh actions with shallow clone
-        execPromise(`git rev-list -n 32 ${commit}`).then((output) =>
-          (output as string)
-            .split("\n")
-            .slice(
-              // Remove head commit
-              1,
-              // Handle final newline
+  const commitsLatestPromise = !process.env.GITHUB_ACTION
+    ? // This doesn't work in gh actions with shallow clone
+      execPromise(`git rev-list -n 32 ${commit}`).then((output) =>
+        (output as string)
+          .split("\n")
+          .slice(
+            // Remove head commit
+            1,
+            // Handle final newline
 
-              -1
-            )
-            .join(",")
-        )
-      : // We fetch from github API instead of deep cloning to save on cloning time
-        fetch("https://api.github.com/graphql", {
-          method: "POST",
-          headers: {
-            accept: "application/vnd.github.v3+json",
-            authorization: `Bearer ${process.env.GITHUB_TOKEN}`,
-            "X-GitHub-Api-Version": "2022-11-28",
-            "X-Github-Next-Global-ID": "1",
-          },
-          body: JSON.stringify({
-            query: `
+            -1
+          )
+          .join(",")
+      )
+    : // We fetch from github API instead of deep cloning to save on cloning time
+      fetch("https://api.github.com/graphql", {
+        method: "POST",
+        headers: {
+          accept: "application/vnd.github.v3+json",
+          authorization: `Bearer ${process.env.GITHUB_TOKEN}`,
+          "X-GitHub-Api-Version": "2022-11-28",
+          "X-Github-Next-Global-ID": "1",
+        },
+        body: JSON.stringify({
+          query: `
       query {
         repository(owner: "${process.env.GITHUB_REPOSITORY_OWNER}", name: "${
-              process.env.GITHUB_REPOSITORY?.split("/")[1]
-            }") {
+            process.env.GITHUB_REPOSITORY?.split("/")[1]
+          }") {
           object(oid: "${commit}") {
             ... on Commit {
               history(first: 32) {
@@ -113,14 +112,14 @@ const execPromise = (command: string) => {
           }
         }
       }`,
-          }),
-        })
-          .then((response) => response.json())
-          .then((payload) =>
-            payload.data.repository.object.history.nodes
-              .map(({ oid }) => oid)
-              .slice(1)
-          );
+        }),
+      })
+        .then((response) => response.json())
+        .then((payload) =>
+          payload.data.repository.object.history.nodes
+            .map(({ oid }) => oid)
+            .slice(1)
+        );
 
   // TODO: prep npm package bundle ahead of time
 
@@ -238,7 +237,6 @@ const execPromise = (command: string) => {
         authorization: `Bearer ${accessToken}`,
       },
       body,
-      // TODO: body
     }
   ).then((response) => response.json());
 
