@@ -1,0 +1,44 @@
+name: test-development
+on:
+  push:
+    branches:
+      - "*"
+jobs:
+  test-development:
+    name: Test and publish CLI
+    runs-on: ubuntu-22.04
+    timeout-minutes: 1
+    concurrency:
+      group: test-development
+      cancel-in-progress: true
+    permissions:
+      # for testing cli functionality (get commit history)
+      contents: read
+      # for installing @reflame/lib-resource
+      packages: read
+      # for npm publish provenance
+      id-token: write
+    steps:
+      - uses: actions/checkout@v3.5.0
+      - uses: oven-sh/setup-bun@v1
+        with:
+          bun-version: 1.0.14
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+      - run: echo "[install.scopes]" > bunfig.toml
+      - run: echo "reflame = { url = \"https://npm.pkg.github.com\", token = \"${GITHUB_TOKEN}\" }" >> bunfig.toml
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - run: bun install
+      - run: bun run build
+      # - run: bun run start
+      #   env:
+      # REFLAME_SECRET_DEVELOPMENT: ${{ secrets.REFLAME_SECRET_DEVELOPMENT }}
+      # REFLAME_SECRET_PRODUCTION: ${{ secrets.REFLAME_SECRET_PRODUCTION }}
+      #     GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - run: bun run start-node
+        env:
+          REFLAME_SECRET: ${{ secrets.REFLAME_SECRET_DEVELOPMENT }}
+          # REFLAME_SECRET: ${{ secrets.REFLAME_SECRET_PRODUCTION }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
