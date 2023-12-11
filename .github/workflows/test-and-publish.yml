@@ -39,7 +39,6 @@ jobs:
       #     GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       - run: bun run start-node
         env:
-          # REFLAME_SECRET: ${{ secrets.REFLAME_SECRET_DEVELOPMENT }}
           REFLAME_SECRET: ${{ secrets.REFLAME_SECRET_PRODUCTION }}
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       - run: bun run publish
@@ -54,6 +53,5 @@ jobs:
       - run: cd testApp && npx @reflame/cli
         if: github.ref == 'refs/heads/main'
         env:
-          # REFLAME_SECRET: ${{ secrets.REFLAME_SECRET_DEVELOPMENT }}
           REFLAME_SECRET: ${{ secrets.REFLAME_SECRET_PRODUCTION }}
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

@@ -5,7 +5,7 @@ on:
       - "*"
 jobs:
   test-development:
-    name: Test and publish CLI
+    name: Test development
     runs-on: ubuntu-22.04
     timeout-minutes: 1
     concurrency:
@@ -40,5 +40,5 @@ jobs:
       - run: bun run start-node
         env:
           REFLAME_SECRET: ${{ secrets.REFLAME_SECRET_DEVELOPMENT }}
-          # REFLAME_SECRET: ${{ secrets.REFLAME_SECRET_PRODUCTION }}
+          NODE_ENV: development
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
