@@ -1,6 +1,6 @@
 {
-  "appId": "01HG7RWN7G9ZXYW9P5P19GSR6R", // prod
-  // "appId": "01HFR07ANJYQPFHZ47G5MXY10Z", // dev
+  // "appId": "01HG7RWN7G9ZXYW9P5P19GSR6R", // prod
+  "appId": "01HFR07ANJYQPFHZ47G5MXY10Z", // dev
   "sourceDirectory": "app",
   "storybookCompatibility": {
     "testStories": true,
