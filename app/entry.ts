@@ -33,7 +33,7 @@ const execPromise = (command: string) => {
       : "https://identity.reflame.app";
 
   const commit =
-    process.env.NODE_ENV === "development"
+    process.env.NODE_ENV === "development" && !process.env.GITHUB_ACTION
       ? "c096f9dcc14963cd9742075eb37a2cdf1714dfe5"
       : (process.env.GITHUB_SHA as string);
 
