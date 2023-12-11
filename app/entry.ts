@@ -21,6 +21,7 @@ const execPromise = (command: string) => {
 };
 
 (async () => {
+  console.log("process.env.NODE_ENV", process.env.NODE_ENV);
   const deployerOrigin =
     process.env.NODE_ENV === "development"
       ? "https://deployer.reflame.cloud"
