@@ -31,14 +31,7 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       - run: bun install
-      - run: bun run build
-      # - run: bun run start
-      #   env:
-      # REFLAME_SECRET_DEVELOPMENT: ${{ secrets.REFLAME_SECRET_DEVELOPMENT }}
-      # REFLAME_SECRET_PRODUCTION: ${{ secrets.REFLAME_SECRET_PRODUCTION }}
-      #     GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      - run: bun run start-node
+      - run: bun run start-dev
         env:
           REFLAME_SECRET: ${{ secrets.REFLAME_SECRET_DEVELOPMENT }}
-          NODE_ENV: development
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

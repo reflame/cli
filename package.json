@@ -10,6 +10,7 @@
     "build": "bun ./build.js",
     "publish": "bun ./publish.js",
     "start": "cd ./testApp/ && bun run ../build/entry.mjs",
+    "start-dev": "cd ./testApp/ && NODE_ENV=development bun run ../app/entry.ts",
     "start-node": "cd ./testApp/ && node ../build/entry.mjs"
   },
   "devDependencies": {
